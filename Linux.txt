@@ -1,0 +1,99 @@
+Linux:
+
+1. single user - single tasking - ms dos
+2. single user - multi tasking windows
+3. multi user - multi tasking -unix, linux
+
+
+
+Unix:
+
+C program.
+
+Kernel -> 
+
+Unix  - everything is file. - IBM AIx, HP-UX, sun solaris, apple - AT &T lab
+
+Linux: 1991 Linus tornald. open source. Developed by community
+
+GNU- GPL
+
+bootloader -
+init -
+coreutils
+tools -librarties
+package management sys
+
+Linux distributions:
+
+1. RPM Based:  Red hat -> fedora, centos, oracle linux, amazon linux
+ and suse 
+
+yum install git
+
+.rpm
+
+2. Debian based: ubuntu, xubuntu, lububtu.
+.deb
+
+apt-get install git
+
+3. pacman x86 x64 based arcch
+
+
+
+1. open source
+2. sceduling, app manage
+
+security - admin
+free
+light weight
+
+
+
+/ -> Root dir
+/root -> Home dir for root
+/home -> home dir for other user
+/boot -> bootable files for linux
+/etc -> config
+/usr -> default installed sw
+/opt -> third party sw
+/bin -> commands used by all users
+/sbin -> super users (admin/root user)
+/lib-> shared libraries used by bin and sbin
+/dev -> device files
+/proc -> process files 
+/sys -> kernel info
+/var -> variable data
+
+Create
+
+mkdir
+cat
+touch
+
+
+1. Insert mode:
+2. Command mode:
+
+gg -> beggining of page
+G -> end of page
+
+yy -> copy
+
+p -paste
+
+dd ->delete
+
+
+
+
+
+
+
+
+
+
+
+
+
