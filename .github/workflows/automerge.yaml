@@ -1,6 +1,8 @@
 name: Automerge Branches
 
 on:
+push:
+  branches: ["automerge-testing"}
   workflow_dispatch:  # Manual trigger
 
     inputs:
