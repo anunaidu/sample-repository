@@ -5,5 +5,8 @@ on:
     branches:
       - automerge-testing  # Trigger on pushes to this branch
   workflow_dispatch:
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
   
 
