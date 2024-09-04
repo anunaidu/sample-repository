@@ -1,51 +1,17 @@
 name: Automerge Branches
 
 on:
-  push:
-    branches:
-      - automerge-testing  # Trigger on pushes to this branch
   workflow_dispatch:
-
     inputs:
       srcBranch:
         description: 'Source branch to merge from'
         required: true
-        default: 'test1'
+        default: 'main'
       targetBranch:
         description: 'Target branch to merge into'
         required: true
-        default: 'master'
-
+        default: 'develop'
 jobs:
   automerge:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout main repository
-        uses: actions/checkout@v3
-        with:
-          path: src  # Checkout the repository into 'src' directory
-          
-      - name: Retrieve Repository SSH URL
-        id: repo_info
-        run: |
-          # Get the SSH URL of the current repository
-          repo_ssh_url=$(git config --get remote.origin.url)
-          echo "repo_ssh_url=${repo_ssh_url}" >> $GITHUB_ENV
-
-      - name: Run Automerge Script
-        run: |
-          srcBranch="${{ github.event.inputs.srcBranch }}"
-          targetBranch="${{ github.event.inputs.targetBranch }}"
-          echo "srcBranch=$srcBranch"
-          echo "targetBranch=$targetBranch"
-
-          # Use the SSH URL retrieved from the previous step
-          repo_url_1="${{ env.repo_ssh_url }}"
-          repo_url_2="${{ env.repo_ssh_url }}"
-          mail_to="anu@gmail.com"
-          dont_resolve="-d"
-          dont_update="-n"
-          verbose=""
-
-          echo  "-r src -f ${srcBranch} -t ${targetBranch} -s ${repo_url_1} -b ${repo_url_2} -m ${mail_to} ${dont_resolve} ${dont_update} ${verbose}"
