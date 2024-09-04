@@ -1,17 +1,9 @@
 name: Automerge Branches
 
 on:
+  push:
+    branches:
+      - automerge-testing  # Trigger on pushes to this branch
   workflow_dispatch:
-    inputs:
-      srcBranch:
-        description: 'Source branch to merge from'  # Description for source branch input
-        required: true
-        default: 'test1'  # Default value, you can change this to any default branch
-      targetBranch:
-        description: 'Target branch to merge into'  # Description for target branch input
-        required: true
-        default: 'master'  # Default value, change to any target branch
-jobs:
-  automerge:
-    runs-on: ubuntu-latest
+  
 
