@@ -10,11 +10,11 @@ on:
       srcBranch:
         description: 'Source branch to merge from'
         required: true
-        default: 'main'
+        default: 'test1'
       targetBranch:
         description: 'Target branch to merge into'
         required: true
-        default: 'develop'
+        default: 'master'
 
 jobs:
   automerge:
