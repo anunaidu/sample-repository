@@ -25,13 +25,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: src  # Checkout the repository into 'src' directory
-
-      - name: Checkout tools-cm-utils repository
-        uses: actions/checkout@v3
-        with:
-          repository: git@github.com:anunaidu/zero-devops-utils.git  # Replace with the actual tools-cm-utils repository
-          path: zero-devops-utils
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Retrieve Repository SSH URL
         id: repo_info
