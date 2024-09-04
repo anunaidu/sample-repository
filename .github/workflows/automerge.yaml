@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       srcBranch:
-        description: 'Source branch to merge from'
+        description: 'Source branch to merge from'  # Description for source branch input
         required: true
-        default: 'main'
+        default: 'test1'  # Default value, you can change this to any default branch
       targetBranch:
-        description: 'Target branch to merge into'
+        description: 'Target branch to merge into'  # Description for target branch input
         required: true
-        default: 'develop'
+        default: 'master'  # Default value, change to any target branch
 jobs:
   automerge:
     runs-on: ubuntu-latest
