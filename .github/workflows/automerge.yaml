@@ -21,7 +21,7 @@ jobs:
       - name: Checkout zero-devops-utils repository
         uses: actions/checkout@v4
         with:
-          repository: https://github.com/anunaidu/Copyright-checker.git # Replace with your actual repository name
+          repository: anunaidu/Copyright-checker # Replace with your actual repository name
           path: cm-utils  # Checkout directory is 'cm-utils' where Perl script exists
           token: ${{ secrets.GITHUB_TOKEN }}
 
