@@ -8,5 +8,14 @@ on:
 jobs:
   automerge:
     runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout main repository
+        uses: actions/checkout@v3
+        with:
+          path: src
+       
+
+    
   
 
