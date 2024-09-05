@@ -4,29 +4,41 @@ on:
   push:
     branches:
       - automerge-testing  # Trigger on pushes to this branch
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger
+
 jobs:
   automerge:
     runs-on: ubuntu-latest
-    
+
     steps:
+      # Step 1: Checkout the default repository (sample repository)
       - name: Checkout main repository
         uses: actions/checkout@v4
         with:
-          path: src
+          path: src  # Checkout directory is 'src'
 
-      - name: List Repository Directory Contents
-        run: |
-          cd src  # Change to the checked-out repository directory
-          echo "Current directory: $(pwd)"  # Print the current directory path
-          ls -la  # List all files in the current directory
-
-      - name: Checkout zero-devops-util repository
+      # Step 2: Checkout the zero-devops-utils repository
+      - name: Checkout zero-devops-utils repository
         uses: actions/checkout@v4
         with:
-          repository: anunaidu/zero-devops-utils
+          repository: anunaidu/zero-devops-utils  # Replace with your actual repository name
+          path: cm-utils  # Checkout directory is 'cm-utils' where Perl script exists
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: zero-devops-utils
+
+      # Add both repositories to the Git safe directory list dynamically
+      - name: Add Repositories to Safe Directory List
+        run: |
+          # Dynamically set safe directories based on checked-out paths
+          git config --global --add safe.directory $GITHUB_WORKSPACE/src
+          git config --global --add safe.directory $GITHUB_WORKSPACE/cm-utils
+
+      # Step 3: List the directory contents to verify checkouts
+      - name: List Repository Directory Contents
+        run: |
+          echo "Listing contents of 'src' directory:"
+          ls -la src
+          echo "Listing contents of 'cm-utils' directory:"
+          ls -la cm-utils
        
 
     
