@@ -11,7 +11,7 @@ jobs:
     
     steps:
       - name: Checkout main repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: src
 
@@ -20,6 +20,13 @@ jobs:
           cd src  # Change to the checked-out repository directory
           echo "Current directory: $(pwd)"  # Print the current directory path
           ls -la  # List all files in the current directory
+
+      - name: Checkout zero-devops-util repository
+        uses: actions/checkout@v4
+        with:
+          repository: anunaidu/zero-devops-utils
+          path: zero-devops-utils
+          token: ${{ secrets.GITHUB_TOKEN }}
        
 
     
