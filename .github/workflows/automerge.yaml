@@ -25,13 +25,6 @@ jobs:
           path: cm-utils  # Checkout directory is 'cm-utils' where Perl script exists
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Add both repositories to the Git safe directory list dynamically
-      - name: Add Repositories to Safe Directory List
-        run: |
-          # Dynamically set safe directories based on checked-out paths
-          git config --global --add safe.directory $GITHUB_WORKSPACE/src
-          git config --global --add safe.directory $GITHUB_WORKSPACE/cm-utils
-
       # Step 3: List the directory contents to verify checkouts
       - name: List Repository Directory Contents
         run: |
