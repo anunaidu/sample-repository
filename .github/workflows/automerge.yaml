@@ -25,8 +25,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: anunaidu/zero-devops-utils
-          path: zero-devops-utils
           token: ${{ secrets.GITHUB_TOKEN }}
+          path: zero-devops-utils
        
 
     
