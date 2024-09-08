@@ -1,0 +1,60 @@
+name: Automerge Branches
+
+on: 
+  push:
+    branches:
+      - automerge-testing
+  workflow_dispatch: 
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the main repository
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+        with:
+          path: src 
+
+      # Step 2: Checkout the secondary repository
+      - name: Checkout zero-devops-utils repository
+        uses: actions/checkout@v4
+        with:
+          repository: anunaidu/Copyright-checker
+          path: cm-utils
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 3: Set Source Repository URL
+      - name: Set Source Repository URL
+        run: |
+          echo "SRC_REPO_URL=https://github.com/${GITHUB_REPOSITORY}.git" >> $GITHUB_ENV
+
+      # Step 4: Set Secondary Repository URL
+      - name: Set Secondary Repository URL
+        run: |
+          echo "SECOND_REPO_URL=https://github.com/anunaidu/Copyright-checker.git" >> $GITHUB_ENV
+
+      # Step 5: Run the Perl Automerge Script
+      - name: Run Automerge Script
+        run: |
+          SRC_BRANCH=test1
+          TARGET_BRANCH=master
+          MAILTO="anu@gmail.com" 
+          DONT_RESOLVE="-d" 
+          DONT_UPDATE="-n" 
+          VERBOSE="" 
+
+          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH...
+          
+          perl cm-utils/automerge/automerge-git-via-merge.pl \
+            -r ${GITHUB_WORKSPACE}/src \
+            -f "$SRC_BRANCH" \
+            -t "$TARGET_BRANCH" \
+            -s "$SRC_REPO_URL" \
+            -b "$SECOND_REPO_URL" \
+            -m "$MAILTO" ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
+            
+        env:
+          SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
+          SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
