@@ -37,12 +37,13 @@ jobs:
           repository: anunaidu/Copyright-checker
           path: cm-utils
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      # Step 3: Dynamically set repository URLs
+          
+     # Step 3: Dynamically set repository URLs
       - name: Get Source and Target Repository URLs
         run: |
-          SRC_REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
-          SECOND_REPO_URL="git@github.com:anunaidu/Copyright-checker.git" 
+          echo "Setting repository URLs..."
+          echo "SRC_REPO_URL=https://github.com/${GITHUB_REPOSITORY}.git" >> $GITHUB_ENV
+          echo "SECOND_REPO_URL=git@github.com:anunaidu/Copyright-checker.git" >> $GITHUB_ENV 
 
       # Step 4: Run the Perl Automerge Script
       - name: Run Automerge Script
