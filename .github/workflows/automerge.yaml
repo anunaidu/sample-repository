@@ -30,22 +30,25 @@ jobs:
         with:
           path: src 
 
-      # Step 2: Checkout the second repository
+      # Step 2: Checkout the secondary repository
       - name: Checkout zero-devops-utils repository
         uses: actions/checkout@v4
         with:
           repository: anunaidu/Copyright-checker
           path: cm-utils
           token: ${{ secrets.GITHUB_TOKEN }}
-          
-     # Step 3: Dynamically set repository URLs
-      - name: Get Source and Target Repository URLs
-        run: |
-          echo "Setting repository URLs..."
-          echo "SRC_REPO_URL=https://github.com/${GITHUB_REPOSITORY}.git" >> $GITHUB_ENV
-          echo "SECOND_REPO_URL=https://github.com/anunaidu/Copyright-checker.git" >> $GITHUB_ENV 
 
-      # Step 4: Run the Perl Automerge Script
+      # Step 3: Set Source Repository URL
+      - name: Set Source Repository URL
+        run: |
+          echo "SRC_REPO_URL=https://github.com/${GITHUB_REPOSITORY}.git" >> $GITHUB_ENV
+
+      # Step 4: Set Secondary Repository URL
+      - name: Set Secondary Repository URL
+        run: |
+          echo "SECOND_REPO_URL=https://github.com/anunaidu/Copyright-checker.git" >> $GITHUB_ENV
+
+      # Step 5: Run the Perl Automerge Script
       - name: Run Automerge Script
         run: |
           SRC_BRANCH="${{ github.event.inputs.source-branch }}"
@@ -59,12 +62,11 @@ jobs:
           
           perl cm-utils/automerge/automerge-git-via-merge.pl \
             -r ${GITHUB_WORKSPACE}/src \
-            -f ${SRC_BRANCH} \
-            -t ${TARGET_BRANCH} \
-            -s ${SRC_REPO_URL} \
-            -b ${SECOND_REPO_URL} \
-            -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
-
+            -f "$SRC_BRANCH" \
+            -t "$TARGET_BRANCH" \
+            -s "$SRC_REPO_URL" \
+            -b "$SECOND_REPO_URL" \
+            -m "$MAILTO" ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
         env:
           SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
           SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
