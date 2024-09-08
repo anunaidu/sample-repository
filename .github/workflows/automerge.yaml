@@ -6,42 +6,69 @@ on:
       - automerge-testing  # Trigger on pushes to this branch
   workflow_dispatch:  # Manual trigger
 
+    inputs:
+      source-branch:
+        description: 'Source branch'
+        required: true
+        default: 'test1'
+      target-branch:
+        description: 'Target branch'
+        required: true
+        default: 'Master'
+      verbose:
+        description: 'Verbose output flag'
+        required: false
+        default: ''
+        
 jobs:
   automerge:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the default repository (sample repository)
+      # Step 1: Checkout the default repository
       - name: Checkout main repository
         uses: actions/checkout@v4
         with:
-          path: src  # Checkout directory is 'src'
+          path: src 
 
       # Step 2: Checkout the zero-devops-utils repository
       - name: Checkout zero-devops-utils repository
         uses: actions/checkout@v4
         with:
-          repository: anunaidu/Copyright-checker # Replace with your actual repository name
-          path: cm-utils  # Checkout directory is 'cm-utils' where Perl script exists
+          repository: anunaidu/Copyright-checker
+          path: cm-utils
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Show Git Remotes for src
-        run: |
-         cd src
-         git remote -v
          
       # Step 3: Dynamically set repository URLs
-      - name: Get Source Repository URL
+      - name: Get Source and Target Repository URLs
         run: |
           SRC_REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
+          SECOND_REPO_URL="git@github.com:anunaidu/Copyright-checker.git"  # SSH URL
           echo "Source repository URL: $SRC_REPO_URL"
-          
-      # Step 3: List the directory contents to verify checkouts
-      - name: List Repository Directory Contents
+          echo "Second repository URL: $SECOND_REPO_URL"
+          echo "SRC_REPO_URL=$SRC_REPO_URL" >> $GITHUB_ENV
+          echo "SECOND_REPO_URL=$SECOND_REPO_URL" >> $GITHUB_ENV
+
+      # Step 4: Run the Perl Automerge Script
+      - name: Run Automerge Script
         run: |
-          echo "Listing contents of 'src' directory:"
-          ls -la src
-          echo "Listing contents of 'cm-utils' directory:"
-          ls -la cm-utils
+          SRC_BRANCH="${{ github.event.inputs.source-branch }}"
+          TARGET_BRANCH="${{ github.event.inputs.target-branch }}"
+          MAILTO="anu@gmail.com"  # Hardcoded value for email recipient
+          DONT_RESOLVE="-d"  # Hardcoded flag for don't resolve
+          DONT_UPDATE="-n"   # Hardcoded flag for don't update
+          VERBOSE="${{ github.event.inputs.verbose }}"  # Optional verbose flag
+
+          echo "Running Automerge Script..."
+          echo "perl cm-utils/automerge/automerge-git-via-merge.pl \
+            -r ${GITHUB_WORKSPACE}/src \
+            -f ${SRC_BRANCH} \
+            -t ${TARGET_BRANCH} \
+            -s ${SRC_REPO_URL} \
+            -b ${SECOND_REPO_URL} \
+            -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
+          
+
        
 
     
