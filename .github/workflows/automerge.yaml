@@ -62,4 +62,4 @@ jobs:
             -t ${TARGET_BRANCH} \
             -s ${SRC_REPO_URL} \
             -b ${SECOND_REPO_URL} \
-            -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}
+            -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
