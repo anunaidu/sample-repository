@@ -28,7 +28,13 @@ jobs:
         run: |
          cd src
          git remote -v
-
+         
+      # Step 3: Dynamically set repository URLs
+      - name: Get Source Repository URL
+        run: |
+          SRC_REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
+          echo "Source repository URL: $SRC_REPO_URL"
+          
       # Step 3: List the directory contents to verify checkouts
       - name: List Repository Directory Contents
         run: |
