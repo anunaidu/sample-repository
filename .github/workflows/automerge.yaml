@@ -70,3 +70,9 @@ jobs:
         env:
           SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
           SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
+
+      - name: Print Environment Variables
+        run: |
+           echo "Source Branch: $SRC_BRANCH"
+           echo "Target Branch: $TARGET_BRANCH"
+
