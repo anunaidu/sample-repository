@@ -3,8 +3,8 @@ name: Automerge Branches
 on:
   push:
     branches:
-      - automerge-testing  # Trigger on pushes to this branch
-  workflow_dispatch:  # Manual trigger
+      - automerge-testing
+  workflow_dispatch:
     inputs:
       source-branch:
         description: 'Source branch'
@@ -43,22 +43,18 @@ jobs:
         run: |
           SRC_REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
           SECOND_REPO_URL="git@github.com:anunaidu/Copyright-checker.git"
-          echo "Source repository URL: $SRC_REPO_URL"
-          echo "Second repository URL: $SECOND_REPO_URL"
-          echo "SRC_REPO_URL=$SRC_REPO_URL" >> $GITHUB_ENV
-          echo "SECOND_REPO_URL=$SECOND_REPO_URL" >> $GITHUB_ENV
 
       # Step 4: Run the Perl Automerge Script
       - name: Run Automerge Script
         run: |
           SRC_BRANCH="${{ github.event.inputs.source-branch }}"
           TARGET_BRANCH="${{ github.event.inputs.target-branch }}"
-          MAILTO="anu@gmail.com"  # Hardcoded value for email recipient
-          DONT_RESOLVE="-d"  # Hardcoded flag for don't resolve
-          DONT_UPDATE="-n"   # Hardcoded flag for don't update
-          VERBOSE="${{ github.event.inputs.verbose }}"  # Verbose flag
+          MAILTO="anu@gmail.com"  
+          DONT_RESOLVE="-d" 
+          DONT_UPDATE="-n"  
+          VERBOSE="${{ github.event.inputs.verbose }}" 
 
-          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH..."
+          echo "Running Automerge Script: 
           
           perl cm-utils/automerge/automerge-git-via-merge.pl \
             -r ${GITHUB_WORKSPACE}/src \
@@ -67,6 +63,7 @@ jobs:
             -s ${SRC_REPO_URL} \
             -b ${SECOND_REPO_URL} \
             -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}
+            "
 
         env:
           SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
