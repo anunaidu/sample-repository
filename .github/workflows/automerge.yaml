@@ -24,6 +24,10 @@ jobs:
           repository: anunaidu/Copyright-checker # Replace with your actual repository name
           path: cm-utils  # Checkout directory is 'cm-utils' where Perl script exists
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Show Git Remotes for src
+        run: |
+         cd src
+         git remote -v
 
       # Step 3: List the directory contents to verify checkouts
       - name: List Repository Directory Contents
