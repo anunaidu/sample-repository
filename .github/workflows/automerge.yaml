@@ -58,7 +58,7 @@ jobs:
           DONT_UPDATE="-n"   # Hardcoded flag for don't update
           VERBOSE="${{ github.event.inputs.verbose }}"  # Optional verbose flag
 
-          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH..."
+          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH...
           
           perl cm-utils/automerge/automerge-git-via-merge.pl \
             -r ${GITHUB_WORKSPACE}/src \
@@ -66,7 +66,7 @@ jobs:
             -t ${TARGET_BRANCH} \
             -s ${SRC_REPO_URL} \
             -b ${SECOND_REPO_URL} \
-            -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}
+            -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
 
         env:
           SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
