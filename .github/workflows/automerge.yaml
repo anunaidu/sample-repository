@@ -5,7 +5,6 @@ on:
     branches:
       - automerge-testing  # Trigger on pushes to this branch
   workflow_dispatch:  # Manual trigger
-
     inputs:
       source-branch:
         description: 'Source branch'
@@ -14,31 +13,31 @@ on:
       target-branch:
         description: 'Target branch'
         required: true
-        default: 'Master'
+        default: 'master'
       verbose:
         description: 'Verbose output flag'
         required: false
         default: ''
-        
+
 jobs:
   automerge:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the default repository
+      # Step 1: Checkout the main repository
       - name: Checkout main repository
         uses: actions/checkout@v4
         with:
           path: src 
 
-      # Step 2: Checkout the zero-devops-utils repository
+      # Step 2: Checkout the second repository
       - name: Checkout zero-devops-utils repository
         uses: actions/checkout@v4
         with:
           repository: anunaidu/Copyright-checker
           path: cm-utils
           token: ${{ secrets.GITHUB_TOKEN }}
-         
+
       # Step 3: Dynamically set repository URLs
       - name: Get Source and Target Repository URLs
         run: |
@@ -59,18 +58,18 @@ jobs:
           DONT_UPDATE="-n"   # Hardcoded flag for don't update
           VERBOSE="${{ github.event.inputs.verbose }}"  # Optional verbose flag
 
-          echo "Running Automerge Script..."
-          echo "perl cm-utils/automerge/automerge-git-via-merge.pl \
+          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH..."
+          
+          perl cm-utils/automerge/automerge-git-via-merge.pl \
             -r ${GITHUB_WORKSPACE}/src \
             -f ${SRC_BRANCH} \
             -t ${TARGET_BRANCH} \
             -s ${SRC_REPO_URL} \
             -b ${SECOND_REPO_URL} \
-            -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
-          
+            -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}
 
-       
-
-    
-  
-
+        env:
+          SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
+          SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
+          SRC_BRANCH: ${{ github.event.inputs.source-branch }}
+          TARGET_BRANCH: ${{ github.event.inputs.target-branch }}
