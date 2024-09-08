@@ -1,7 +1,10 @@
 name: Automerge Branches
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - automerge-testing 
+  workflow_dispatch:  
     inputs:
       source-branch:
         description: 'Source branch'
@@ -14,20 +17,20 @@ on:
       verbose:
         description: 'Verbose output flag'
         required: false
-        default: '-v'
+        default: ''
 
 jobs:
   automerge:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the default repository
+      # Step 1: Checkout the main repository
       - name: Checkout main repository
         uses: actions/checkout@v4
         with:
           path: src 
 
-      # Step 2: Checkout the zero-devops-utils repository
+      # Step 2: Checkout the second repository
       - name: Checkout zero-devops-utils repository
         uses: actions/checkout@v4
         with:
@@ -39,19 +42,19 @@ jobs:
       - name: Get Source and Target Repository URLs
         run: |
           SRC_REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
-          SECOND_REPO_URL="git@github.com:anunaidu/Copyright-checker.git"
+          SECOND_REPO_URL="git@github.com:anunaidu/Copyright-checker.git" 
 
       # Step 4: Run the Perl Automerge Script
       - name: Run Automerge Script
         run: |
           SRC_BRANCH="${{ github.event.inputs.source-branch }}"
           TARGET_BRANCH="${{ github.event.inputs.target-branch }}"
-          MAILTO="anu@gmail.com"  
+          MAILTO="anu@gmail.com" 
           DONT_RESOLVE="-d" 
-          DONT_UPDATE="-n"  
+          DONT_UPDATE="-n" 
           VERBOSE="${{ github.event.inputs.verbose }}" 
 
-          echo "Running Automerge Script: 
+          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH...
           
           perl cm-utils/automerge/automerge-git-via-merge.pl \
             -r ${GITHUB_WORKSPACE}/src \
@@ -59,9 +62,10 @@ jobs:
             -t ${TARGET_BRANCH} \
             -s ${SRC_REPO_URL} \
             -b ${SECOND_REPO_URL} \
-            -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}
-            "
+            -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
 
         env:
           SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
           SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
+          SRC_BRANCH: ${{ github.event.inputs.source-branch }}
+          TARGET_BRANCH: ${{ github.event.inputs.target-branch }}
