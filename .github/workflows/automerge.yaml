@@ -63,3 +63,7 @@ jobs:
             -s ${SRC_REPO_URL} \
             -b ${SECOND_REPO_URL} \
             -m ${MAILTO} ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
+
+        env:
+          SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
+          SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
