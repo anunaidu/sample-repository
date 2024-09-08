@@ -1,9 +1,6 @@
 name: Automerge Branches
 
 on:
-  push:
-    branches:
-      - automerge-testing
   workflow_dispatch:
     inputs:
       source-branch:
