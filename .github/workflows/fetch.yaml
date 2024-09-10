@@ -1,0 +1,22 @@
+name: Git Fetch Test
+
+on:
+  push:
+    branches:
+      - automerge-testing
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          path: src
+
+      - name: Test Git Fetch
+        run: |
+          cd src
+          git fetch origin
+          git branch -a
