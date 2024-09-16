@@ -26,15 +26,19 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
+      - name: Fetch all branches
+        run: |
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*'
+
       - name: Verify Branch Existence
         run: |
           git fetch --all
-          git branch -a
-          if ! git show-ref --quiet refs/heads/${{ github.event.inputs.tgtBranch }}; then
+          git branch -r
+          if ! git show-ref --quiet refs/remotes/origin/${{ github.event.inputs.tgtBranch }}; then
             echo "Target branch '${{ github.event.inputs.tgtBranch }}' does not exist."
             exit 1
           fi
-          if ! git show-ref --quiet refs/heads/${{ github.event.inputs.srcBranch }}; then
+          if ! git show-ref --quiet refs/remotes/origin/${{ github.event.inputs.srcBranch }}; then
             echo "Source branch '${{ github.event.inputs.srcBranch }}' does not exist."
             exit 1
           fi
