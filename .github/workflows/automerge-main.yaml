@@ -1,71 +1,65 @@
-name: Automerge Branches
+name: Automerge Workflow
 
-on: 
-  workflow_dispatch:  
+on:
+  workflow_dispatch:
     inputs:
-      source-branch:
-        description: 'Source branch'
+      srcBranch:
+        description: 'Source branch to merge from'
         required: true
-        default: 'test1'
-      target-branch:
-        description: 'Target branch'
+        type: string
+      tgtBranch:
+        description: 'Target branch to merge into'
         required: true
-        default: 'master'
-      verbose:
-        description: 'Verbose output flag'
-        required: false
-        default: ''
+        type: string
 
 jobs:
   automerge:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Checkout the main repository
-      - name: Checkout main repository
-        uses: actions/checkout@v4
-        with:
-          path: src 
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      # Step 2: Checkout the secondary repository
-      - name: Checkout zero-devops-utils repository
-        uses: actions/checkout@v4
-        with:
-          repository: anunaidu/Copyright-checker
-          path: cm-utils
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      # Step 3: Set Source Repository URL
-      - name: Set Source Repository URL
+      - name: Set up Git
         run: |
-          echo "SRC_REPO_URL=https://github.com/${GITHUB_REPOSITORY}.git" >> $GITHUB_ENV
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
 
-      # Step 4: Set Secondary Repository URL
-      - name: Set Secondary Repository URL
+      - name: Check branch protection
+        id: check_protection
         run: |
-          echo "SECOND_REPO_URL=https://github.com/anunaidu/Copyright-checker.git" >> $GITHUB_ENV
+          protection_status=$(gh api repos/${{ github.repository }}/branches/${{ github.event.inputs.tgtBranch }}/protection --jq '.enabled')
+          echo "protection_status=$protection_status" >> $GITHUB_ENV
 
-      # Step 5: Run the Perl Automerge Script
-      - name: Run Automerge Script
+      - name: Merge branches if not protected
+        if: env.protection_status == 'false'
         run: |
-          SRC_BRANCH="${{ github.event.inputs.source-branch }}"
-          TARGET_BRANCH="${{ github.event.inputs.target-branch }}"
-          MAILTO="anu@gmail.com" 
-          DONT_RESOLVE="-d" 
-          DONT_UPDATE="-n" 
-          VERBOSE="${{ github.event.inputs.verbose }}" 
+          git checkout ${{ github.event.inputs.tgtBranch }}
+          git merge ${{ github.event.inputs.srcBranch }}
+          git push
 
-          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH...
-          
-          perl cm-utils/automerge/automerge-git-via-merge.pl \
-            -r ${GITHUB_WORKSPACE}/src \
-            -f "$SRC_BRANCH" \
-            -t "$TARGET_BRANCH" \
-            -s "$SRC_REPO_URL" \
-            -b "$SECOND_REPO_URL" \
-            -m "$MAILTO" ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
-            
-        env:
-          SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
-          SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
+      - name: Create PR if protected
+        if: env.protection_status == 'true'
+        run: |
+          gh pr create --base ${{ github.event.inputs.tgtBranch }} --head ${{ github.event.inputs.srcBranch }} --title "Automerged PR from ${{ github.event.inputs.srcBranch }}" --body "Automerged PR"
 
+      - name: Check for merge conflicts
+        id: conflict_check
+        run: |
+          git checkout ${{ github.event.inputs.tgtBranch }}
+          git merge ${{ github.event.inputs.srcBranch }} || echo "Conflict detected" > conflict.txt
+          if [ -f conflict.txt ]; then
+            echo "Merge conflicts detected. Sending email."
+            # Configure your mail sending here
+            mail mahi.naidu770@gmail.com
+          fi
+
+      - name: Send success email
+        if: success()
+        run: |
+          echo "Workflow succeeded. Sending email."
+          # Configure your mail sending here
+           mail mahi.naidu770@gmail.com
+
+      - name: Clean up
+        run: |
+          rm -f conflict.txt
