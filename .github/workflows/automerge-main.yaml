@@ -64,14 +64,47 @@ jobs:
           git merge ${{ github.event.inputs.srcBranch }} || echo "Conflict detected" > conflict.txt
           if [ -f conflict.txt ]; then
             echo "Merge conflicts detected. Sending email."
-            mail mahi.naidu770@gmail.com
+            curl -X POST "https://api.sendgrid.com/v3/mail/send" \
+              -H "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "personalizations": [
+                  {
+                    "to": [{ "email": "mahi.naidu770@gmail.com" }],
+                    "subject": "Merge Conflict Notification"
+                  }
+                ],
+                "from": { "email": "noreply@github.com" },
+                "content": [
+                  {
+                    "type": "text/plain",
+                    "value": "Merge conflicts detected in the workflow. Please check the logs for details."
+                  }
+                ]
+              }'
           fi
 
       - name: Send success email
         if: success()
         run: |
-          echo "Workflow succeeded. Sending email."
-          mail mahi.naidu770@gmail.com
+          curl -X POST "https://api.sendgrid.com/v3/mail/send" \
+            -H "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "personalizations": [
+                {
+                  "to": [{ "email": "mahi.naidu770@gmail.com" }],
+                  "subject": "Workflow Success"
+                }
+              ],
+              "from": { "email": "noreply@github.com" },
+              "content": [
+                {
+                  "type": "text/plain",
+                  "value": "The workflow has succeeded."
+                }
+              ]
+            }'
 
       - name: Clean up
         run: |
