@@ -41,9 +41,14 @@ jobs:
       - name: Check branch protection
         id: check_protection
         run: |
-          protection_status=$(gh api repos/${{ github.repository }}/branches/${{ github.event.inputs.tgtBranch }}/protection --jq '.enabled')
-          echo "protection_status=$protection_status" >> $GITHUB_ENV
-          echo "Protection status: $protection_status"
+          # Check if the branch is protected
+          protection_status=$(gh api repos/${{ github.repository }}/branches/${{ github.event.inputs.tgtBranch }}/protection --jq '.enabled' 2>&1 || echo "404")
+          if [ "$protection_status" == "404" ]; then
+            echo "Branch not protected"
+            echo "protection_status=false" >> $GITHUB_ENV
+          else
+            echo "protection_status=true" >> $GITHUB_ENV
+          fi
 
       - name: Merge branches if not protected
         if: env.protection_status == 'false'
@@ -64,47 +69,14 @@ jobs:
           git merge ${{ github.event.inputs.srcBranch }} || echo "Conflict detected" > conflict.txt
           if [ -f conflict.txt ]; then
             echo "Merge conflicts detected. Sending email."
-            curl -X POST "https://api.sendgrid.com/v3/mail/send" \
-              -H "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
-              -H "Content-Type: application/json" \
-              -d '{
-                "personalizations": [
-                  {
-                    "to": [{ "email": "mahi.naidu770@gmail.com" }],
-                    "subject": "Merge Conflict Notification"
-                  }
-                ],
-                "from": { "email": "noreply@github.com" },
-                "content": [
-                  {
-                    "type": "text/plain",
-                    "value": "Merge conflicts detected in the workflow. Please check the logs for details."
-                  }
-                ]
-              }'
+            mahi.naidu770@gmail.com
           fi
 
       - name: Send success email
         if: success()
         run: |
-          curl -X POST "https://api.sendgrid.com/v3/mail/send" \
-            -H "Authorization: Bearer ${{ secrets.SENDGRID_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "personalizations": [
-                {
-                  "to": [{ "email": "mahi.naidu770@gmail.com" }],
-                  "subject": "Workflow Success"
-                }
-              ],
-              "from": { "email": "noreply@github.com" },
-              "content": [
-                {
-                  "type": "text/plain",
-                  "value": "The workflow has succeeded."
-                }
-              ]
-            }'
+          echo "Workflow succeeded. Sending email."
+          mahi.naidu770@gmail.com
 
       - name: Clean up
         run: |
