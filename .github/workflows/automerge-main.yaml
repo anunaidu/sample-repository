@@ -26,9 +26,13 @@ jobs:
 
       - name: Authenticate GitHub CLI
         run: |
-          gh auth login --with-token
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clear GH_TOKEN
+        run: |
+          unset GH_TOKEN
 
       - name: Set up Git
         run: |
