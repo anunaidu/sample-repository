@@ -19,6 +19,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh
+
+      - name: Set up GitHub CLI Authentication
+        run: gh auth setup-git
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up Git
         run: |
           git config user.name "GitHub Actions"
@@ -29,6 +39,7 @@ jobs:
         run: |
           protection_status=$(gh api repos/${{ github.repository }}/branches/${{ github.event.inputs.tgtBranch }}/protection --jq '.enabled')
           echo "protection_status=$protection_status" >> $GITHUB_ENV
+          echo "Protection status: $protection_status"
 
       - name: Merge branches if not protected
         if: env.protection_status == 'false'
@@ -49,15 +60,13 @@ jobs:
           git merge ${{ github.event.inputs.srcBranch }} || echo "Conflict detected" > conflict.txt
           if [ -f conflict.txt ]; then
             echo "Merge conflicts detected. Sending email."
-            # Configure your mail sending here
-            mail mahi.naidu770@gmail.com
+             mail mahi.naidu770@gmail.com
           fi
 
       - name: Send success email
         if: success()
         run: |
           echo "Workflow succeeded. Sending email."
-          # Configure your mail sending here
            mail mahi.naidu770@gmail.com
 
       - name: Clean up
