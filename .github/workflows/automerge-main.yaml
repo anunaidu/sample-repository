@@ -64,14 +64,14 @@ jobs:
           git merge ${{ github.event.inputs.srcBranch }} || echo "Conflict detected" > conflict.txt
           if [ -f conflict.txt ]; then
             echo "Merge conflicts detected. Sending email."
-            # Configure your mail sending here
+            mail mahi.naidu770@gmail.com
           fi
 
       - name: Send success email
         if: success()
         run: |
           echo "Workflow succeeded. Sending email."
-          # Configure your mail sending here
+          mail mahi.naidu770@gmail.com
 
       - name: Clean up
         run: |
