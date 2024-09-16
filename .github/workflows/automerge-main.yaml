@@ -21,20 +21,6 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all branches and tags
 
-      - name: Install GitHub CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gh
-
-      - name: Authenticate GitHub CLI
-        run: |
-          echo "${{ secrets.MY_CUSTOM_TOKEN }}" | gh auth login --with-token
-        env:
-          GH_TOKEN: ${{ secrets.MY_CUSTOM_TOKEN }}
-
-      - name: Verify authentication
-        run: gh auth status
-
       - name: Set up Git
         run: |
           git config user.name "GitHub Actions"
@@ -56,7 +42,10 @@ jobs:
       - name: Check branch protection
         id: check_protection
         run: |
-          protection_status=$(gh api repos/${{ github.repository }}/branches/${{ github.event.inputs.tgtBranch }}/protection --jq '.enabled' 2>&1 || echo "404")
+          protection_status=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/branches/${{ github.event.inputs.tgtBranch }}/protection \
+            | jq '.enabled' 2>&1 || echo "404")
           if [ "$protection_status" == "404" ]; then
             echo "Branch not protected"
             echo "protection_status=false" >> $GITHUB_ENV
@@ -74,7 +63,15 @@ jobs:
       - name: Create PR if protected
         if: env.protection_status == 'true'
         run: |
-          gh pr create --base ${{ github.event.inputs.tgtBranch }} --head ${{ github.event.inputs.srcBranch }} --title "Automerged PR from ${{ github.event.inputs.srcBranch }}" --body "Automerged PR"
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{
+              "title": "Automerged PR from ${{ github.event.inputs.srcBranch }}",
+              "body": "Automerged PR",
+              "head": "${{ github.event.inputs.srcBranch }}",
+              "base": "${{ github.event.inputs.tgtBranch }}"
+            }' \
+            https://api.github.com/repos/${{ github.repository }}/pulls
 
       - name: Check for merge conflicts
         id: conflict_check
@@ -83,7 +80,7 @@ jobs:
           git merge ${{ github.event.inputs.srcBranch }} || echo "Conflict detected" > conflict.txt
           if [ -f conflict.txt ]; then
             echo "Merge conflicts detected. Sending email."
-            # Configure your mail sending here
+            mahi.naidu770@gmail.com
           fi
 
       - name: Send success email
@@ -91,7 +88,7 @@ jobs:
         run: |
           echo "Workflow succeeded. Sending email."
           mahi.naidu770@gmail.com
-          
+
       - name: Clean up
         run: |
           rm -f conflict.txt
