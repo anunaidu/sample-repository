@@ -21,18 +21,12 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all branches and tags
 
-      - name: Set up Git
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-
       - name: Fetch all branches
         run: |
           git fetch origin '+refs/heads/*:refs/remotes/origin/*'
 
       - name: Verify Branch Existence
         run: |
-          git fetch --all
           git branch -r
           if ! git show-ref --quiet refs/remotes/origin/${{ github.event.inputs.tgtBranch }}; then
             echo "Target branch '${{ github.event.inputs.tgtBranch }}' does not exist."
@@ -64,35 +58,21 @@ jobs:
           git merge ${{ github.event.inputs.srcBranch }}
           git push
 
-      - name: Create PR if protected
-        if: env.protection_status == 'true'
+      - name: Get Committers' Emails
+        id: get_committers
         run: |
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d '{
-              "title": "Automerged PR from ${{ github.event.inputs.srcBranch }}",
-              "body": "Automerged PR",
-              "head": "${{ github.event.inputs.srcBranch }}",
-              "base": "${{ github.event.inputs.tgtBranch }}"
-            }' \
-            https://api.github.com/repos/${{ github.repository }}/pulls
+          emails=$(git log --format='%ae' origin/${{ github.event.inputs.srcBranch }} | sort | uniq | tr '\n' ' ')
+          echo "COMMITTER_EMAILS=$emails" >> $GITHUB_ENV
 
-      - name: Check for merge conflicts
-        id: conflict_check
-        run: |
-          git checkout ${{ github.event.inputs.tgtBranch }}
-          git merge ${{ github.event.inputs.srcBranch }} || echo "Conflict detected" > conflict.txt
-          if [ -f conflict.txt ]; then
-            echo "Merge conflicts detected. Sending email."
-            mahi.naidu770@gmail.com
-          fi
+      - name: Install sendmail
+        run: sudo apt-get install -y sendmail
 
-      - name: Send success email
-        if: success()
+      - name: Send success email to committers
+        if: success() && env.protection_status == 'false'
         run: |
-          echo "Workflow succeeded. Sending email."
-          mahi.naidu770@gmail.com
+          echo -e "Subject: Automerge Success\n\nThe branches were automerged successfully." | sendmail -v -f "sender@example.com" ${{ env.COMMITTER_EMAILS }}
 
-      - name: Clean up
+      - name: Send merge conflict email to committers
+        if: failure()
         run: |
-          rm -f conflict.txt
+          echo -e "Subject: Merge Conflict Detected\n\nThere was a conflict while merging ${{ github.event.inputs.srcBranch }} into ${{ github.event.inputs.tgtBranch }}." | sendmail -v -f "sender@example.com" ${{ env.COMMITTER_EMAILS }}
