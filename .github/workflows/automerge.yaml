@@ -1,10 +1,23 @@
 name: Automerge Branches
 
-on: 
+on:
   push:
     branches:
-      - automerge-testing
-  workflow_dispatch: 
+      - automerge-testing 
+  workflow_dispatch:  
+    inputs:
+      source-branch:
+        description: 'Source branch'
+        required: true
+      target-branch:
+        description: 'Target branch'
+        required: true
+      verbose:
+        description: 'Verbose output flag'
+        required: false
+
+  schedule:
+    - cron: '*/30 * * * *'  # Runs every 30 minutes; adjust as needed
 
 jobs:
   automerge:
@@ -29,7 +42,7 @@ jobs:
       - name: Set Source Repository URL
         run: |
           echo "SRC_REPO_URL=https://github.com/${GITHUB_REPOSITORY}.git" >> $GITHUB_ENV
-
+          
       # Step 4: Set Secondary Repository URL
       - name: Set Secondary Repository URL
         run: |
@@ -38,23 +51,22 @@ jobs:
       # Step 5: Run the Perl Automerge Script
       - name: Run Automerge Script
         run: |
-          SRC_BRANCH=test1
-          TARGET_BRANCH=master
+          SRC_BRANCH="${{ github.event.inputs.source-branch }}"  
+          TARGET_BRANCH="${{ github.event.inputs.target-branch }}"  
           MAILTO="anu@gmail.com" 
           DONT_RESOLVE="-d" 
           DONT_UPDATE="-n" 
-          VERBOSE="" 
-
-          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH...
+          VERBOSE="${{ github.event.inputs.verbose }}" 
           
-          perl cm-utils/automerge/automerge-git-via-merge.pl \
+          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH..."
+          
+          "perl cm-utils/automerge/automerge-git-via-merge.pl \
             -r ${GITHUB_WORKSPACE}/src \
             -f "$SRC_BRANCH" \
             -t "$TARGET_BRANCH" \
             -s "$SRC_REPO_URL" \
             -b "$SECOND_REPO_URL" \
             -m "$MAILTO" ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
-            
         env:
           SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
           SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
