@@ -1,9 +1,6 @@
 name: Automerge Branches
 
-on:
-  push:
-    branches:
-      - automerge-testing 
+on: 
   workflow_dispatch:  
     inputs:
       source-branch:
@@ -15,10 +12,6 @@ on:
       verbose:
         description: 'Verbose output flag'
         required: false
-
-  schedule:
-    - cron: '*/30 * * * *'  # Runs every 30 minutes; adjust as needed
-
 jobs:
   automerge:
     runs-on: ubuntu-latest
@@ -58,15 +51,15 @@ jobs:
           DONT_UPDATE="-n" 
           VERBOSE="${{ github.event.inputs.verbose }}" 
           
-          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH..."
+          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH...
           
-          "perl cm-utils/automerge/automerge-git-via-merge.pl \
+           perl cm-utils/automerge/automerge-git-via-merge.pl \
             -r ${GITHUB_WORKSPACE}/src \
             -f "$SRC_BRANCH" \
             -t "$TARGET_BRANCH" \
             -s "$SRC_REPO_URL" \
             -b "$SECOND_REPO_URL" \
-            -m "$MAILTO" ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
+            -m "$MAILTO" ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}""
         env:
           SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
           SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
