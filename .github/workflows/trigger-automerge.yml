@@ -7,17 +7,18 @@ jobs:
   trigger:
     runs-on: ubuntu-latest
     steps:
-    - name: Debug JSON Payload
-      run: |
-       echo '{
-       "event_type": "automate_merge",
-       "client_payload": {
-         "source_repo": "anunaidu/zero-devops-utils",
-         "source_branch": "test1",
-         "target_branch": "main",
-         "verbose": "false"
-      }
-    }'
+      - name: Debug JSON Payload
+        run: |
+          echo '{
+            "event_type": "automate_merge",
+            "client_payload": {
+              "source_repo": "anunaidu/zero-devops-utils",
+              "source_branch": "test1",
+              "target_branch": "main",
+              "verbose": "false"
+            }
+          }'
+
       - name: Trigger Automerge
         run: |
           curl -X POST \
@@ -26,11 +27,10 @@ jobs:
             -d '{
               "event_type": "automate_merge",
               "client_payload": {
-                "source_repo": "anunaidu/zero-devops-utils",  # Full repository name
-                "source_branch": "test1",            # The branch to merge from
-                "target_branch": "main",              # The branch to merge into
-                "verbose": "false"                   # Optional verbose flag
+                "source_repo": "anunaidu/zero-devops-utils",
+                "source_branch": "test1",
+                "target_branch": "main",
+                "verbose": "false"
               }
             }' \
             https://api.github.com/repos/anunaidu/sample-repository/dispatches
-
