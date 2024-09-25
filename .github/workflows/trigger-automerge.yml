@@ -1,8 +1,10 @@
 name: Trigger Automerge
 
 on:
-   push
-    repository_dispatch:
+  push:
+    branches:
+      - test1  # You can specify branches here if needed
+  repository_dispatch:
     types: [automate_merge]
 
 jobs:
@@ -24,4 +26,3 @@ jobs:
               }
             }' \
             https://api.github.com/repos/anunaidu/sample-repository/actions/workflows/automerge.yml/dispatches
-
