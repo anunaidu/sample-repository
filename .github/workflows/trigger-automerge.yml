@@ -12,9 +12,9 @@ jobs:
        echo '{
        "event_type": "automate_merge",
        "client_payload": {
-         "source_repo": "anunaidu/test1",
-         "source_branch": "rel1",
-         "target_branch": "dev",
+         "source_repo": "anunaidu/zero-devops-utils",
+         "source_branch": "test1",
+         "target_branch": "main",
          "verbose": "false"
       }
     }'
@@ -26,9 +26,9 @@ jobs:
             -d '{
               "event_type": "automate_merge",
               "client_payload": {
-                "source_repo": "anunaidu/test1",  # Full repository name
-                "source_branch": "rel1",            # The branch to merge from
-                "target_branch": "dev",              # The branch to merge into
+                "source_repo": "anunaidu/zero-devops-utils",  # Full repository name
+                "source_branch": "test1",            # The branch to merge from
+                "target_branch": "main",              # The branch to merge into
                 "verbose": "false"                   # Optional verbose flag
               }
             }' \
