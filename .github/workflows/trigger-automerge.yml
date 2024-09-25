@@ -7,6 +7,17 @@ jobs:
   trigger:
     runs-on: ubuntu-latest
     steps:
+    - name: Debug JSON Payload
+      run: |
+       echo '{
+       "event_type": "automate_merge",
+       "client_payload": {
+         "source_repo": "anunaidu/test1",
+         "source_branch": "rel1",
+         "target_branch": "dev",
+         "verbose": "false"
+      }
+    }'
       - name: Trigger Automerge
         run: |
           curl -X POST \
