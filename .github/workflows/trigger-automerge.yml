@@ -2,6 +2,8 @@ name: Trigger Automerge
 
 on:
    push
+    repository_dispatch:
+    types: [automate_merge]
 
 jobs:
   trigger:
