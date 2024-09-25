@@ -1,7 +1,9 @@
 name: Trigger Automerge
 
 on:
-  push: # This listens for push events, you can change it to whatever event you prefer
+  push:
+    branches:
+      - test1 # Triggers the workflow when changes are pushed to test1
 
 jobs:
   trigger:
