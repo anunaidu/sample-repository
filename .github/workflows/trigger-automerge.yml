@@ -1,14 +1,11 @@
 name: Trigger Automerge
 
 on:
-  repository_dispatch:
-    types: [automate_merge]
+   push
 
 jobs:
   trigger:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Trigger Automerge Workflow
         run: |
