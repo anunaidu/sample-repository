@@ -1,34 +1,68 @@
-# .github/workflows/automerge.yml in devops-utils
 name: Automerge Branches
 
-on:
-  repository_dispatch:
-    types: [automate_merge]
-
+on: 
+  workflow_dispatch:  
+    inputs:
+      source-repo:
+        description: 'Source repository (e.g., anunaidu/test1)'
+        required: true
+      source-branch:
+        description: 'Source branch'
+        required: true
+      target-branch:
+        description: 'Target branch'
+        required: true
+      verbose:
+        description: 'Verbose output flag'
+        required: false
 jobs:
   automerge:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout DevOps Utils Repo
-        uses: actions/checkout@v4
 
-      - name: Checkout Source Repository
+    steps:
+      # Step 1: Checkout the main repository
+      - name: Checkout Sample Repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event.client_payload.source_repo }}
-          path: source_repo
+          path: src 
+
+      # Step 2: Checkout the secondary repository (Copyright-checker)
+      - name: Checkout Copyright-checker Repository
+        uses: actions/checkout@v4
+        with:
+          repository: anunaidu/Copyright-checker
+          path: cm-utils
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Step 3: Set Source Repository URL
+      - name: Set Source Repository URL
+        run: |
+          echo "SRC_REPO_URL=https://github.com/${{ github.event.inputs.source-repo }}.git" >> $GITHUB_ENV
+          
+      # Step 4: Set Secondary Repository URL
+      - name: Set Secondary Repository URL
+        run: |
+          echo "SECOND_REPO_URL=https://github.com/anunaidu/Copyright-checker.git" >> $GITHUB_ENV
+
+      # Step 5: Run the Perl Automerge Script
       - name: Run Automerge Script
         run: |
-          SRC_BRANCH="${{ github.event.client_payload.source_branch }}"
-          TARGET_BRANCH="${{ github.event.client_payload.target_branch }}"
-          VERBOSE="${{ github.event.client_payload.verbose }}"
-
-          echo "Merging $SRC_BRANCH into $TARGET_BRANCH..."
-
-          # Call your Perl script here
-          "perl ./source_repo/path/to/your-script.pl \
-            -s "$SRC_BRANCH" \
+          SRC_BRANCH="${{ github.event.inputs.source-branch }}"  
+          TARGET_BRANCH="${{ github.event.inputs.target-branch }}"  
+          MAILTO="anu@gmail.com" 
+          DONT_RESOLVE="-d" 
+          DONT_UPDATE="-n" 
+          VERBOSE="${{ github.event.inputs.verbose }}" 
+          
+          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH..."
+          
+          "perl cm-utils/automerge/automerge-git-via-merge.pl \
+            -r ${GITHUB_WORKSPACE}/src \
+            -f "$SRC_BRANCH" \
             -t "$TARGET_BRANCH" \
-            -v "$VERBOSE" # Pass any other arguments as needed"
+            -s "$SRC_REPO_URL" \
+            -b "$SECOND_REPO_URL" \
+            -m "$MAILTO" ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
+        env:
+          SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
+          SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
