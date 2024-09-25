@@ -1,23 +1,24 @@
 name: Trigger Automerge
 
 on:
-  push: # This listens for push events, you can change it to whatever event you prefer
+  push: # This listens for push events, you can change it to any event you prefer
 
 jobs:
   trigger:
     runs-on: ubuntu-latest
     steps:
-    - name: Debug JSON Payload
-      run: |
-       echo '{
-       "event_type": "automate_merge",
-       "client_payload": {
-         "source_repo": "anunaidu/test1",
-         "source_branch": "rel1",
-         "target_branch": "dev",
-         "verbose": "false"
-      }
-    }'
+      - name: Debug JSON Payload
+        run: |
+          echo '{
+            "event_type": "automate_merge",
+            "client_payload": {
+              "source_repo": "anunaidu/test1",
+              "source_branch": "rel1",
+              "target_branch": "dev",
+              "verbose": "false"
+            }
+          }'
+
       - name: Trigger Automerge
         run: |
           curl -X POST \
@@ -26,11 +27,10 @@ jobs:
             -d '{
               "event_type": "automate_merge",
               "client_payload": {
-                "source_repo": "anunaidu/test1",  # Full repository name
-                "source_branch": "rel1",            # The branch to merge from
-                "target_branch": "dev",              # The branch to merge into
-                "verbose": "false"                   # Optional verbose flag
+                "source_repo": "anunaidu/test1",
+                "source_branch": "rel1",
+                "target_branch": "dev",
+                "verbose": "false"
               }
             }' \
             https://api.github.com/repos/anunaidu/sample-repository/dispatches
-
