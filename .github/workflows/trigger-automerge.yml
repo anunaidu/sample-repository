@@ -10,20 +10,19 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Debug Dispatch Response
+      - name: Trigger Automerge Workflow
         run: |
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
-              -H "Accept: application/vnd.github.v3+json" \
-              -H "Authorization: token  GITHUB_TOKEN" \
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -d '{
-              "event_type": "automate_merge",
-              "client_payload": {
+              "ref": "refs/heads/test1",
+              "inputs": {
                 "source_repo": "anunaidu/zero-devops-utils",
                 "source_branch": "test1",
                 "target_branch": "main",
                 "verbose": "false"
               }
             }' \
-            https://api.github.com/repos/anunaidu/sample-repository/dispatches)
-          echo "Response Code: $RESPONSE"
-          echo "Response Code: $RESPONSE"
+            https://api.github.com/repos/anunaidu/sample-repository/actions/workflows/automerge.yml/dispatches
+
