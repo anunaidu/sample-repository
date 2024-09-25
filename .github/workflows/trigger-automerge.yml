@@ -13,8 +13,8 @@ jobs:
       - name: Debug Dispatch Response
         run: |
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              -H "Authorization: token  GITHUB_TOKEN" \
             -d '{
               "event_type": "automate_merge",
               "client_payload": {
