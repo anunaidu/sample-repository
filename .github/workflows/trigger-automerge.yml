@@ -26,3 +26,4 @@ jobs:
             }' \
             https://api.github.com/repos/anunaidu/sample-repository/dispatches)
           echo "Response Code: $RESPONSE"
+          echo "Response Code: $RESPONSE"
