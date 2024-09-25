@@ -54,9 +54,9 @@ jobs:
           DONT_UPDATE="-n" 
           VERBOSE="${{ github.event.inputs.verbose }}" 
           
-          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH..."
+          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH...
           
-          "perl cm-utils/automerge/automerge-git-via-merge.pl \
+          perl cm-utils/automerge/automerge-git-via-merge.pl \
             -r ${GITHUB_WORKSPACE}/src \
             -f "$SRC_BRANCH" \
             -t "$TARGET_BRANCH" \
