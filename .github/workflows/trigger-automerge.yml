@@ -9,6 +9,8 @@ on:
 jobs:
   trigger-automerge:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Trigger Automerge Workflow
