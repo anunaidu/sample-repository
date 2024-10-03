@@ -3,6 +3,9 @@ name: Setup Webhook for Zero-Devops-Utils
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   create-webhook:
     runs-on: ubuntu-latest
@@ -10,14 +13,13 @@ jobs:
     steps:
       - name: Create Webhook for Zero-Devops-Utils
         run: |
-          # Define the repository and branch pair
           repo="zero-devops-utils"
           pair='{"source_branch": "test1", "target_branch": "main"}'
           
           echo "Creating webhook for $repo with payload: $pair"
           
           curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/anunaidu/${repo}/hooks \
             -d '{
