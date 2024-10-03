@@ -1,0 +1,64 @@
+name: Automerge1 Branches
+
+on:
+  repository_dispatch:
+    types: [push]
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the main repository (sample-repository)
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+        with:
+          path: src
+
+      # Step 2: Checkout the secondary repository
+      - name: Checkout zero-devops-utils repository
+        uses: actions/checkout@v4
+        with:
+          repository: anunaidu/Copyright-checker
+          path: cm-utils
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+        # Step 2: Checkout the source repository (dynamically from webhook event)
+      - name: Checkout the repository to be merged
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.client_payload.repository.full_name }}
+          path: src-repo
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 3: Set Source Repository URL
+      - name: Set Source Repository URL
+        run: |
+          echo "SRC_REPO_URL=https://github.com/${{ github.event.client_payload.repository.full_name }}.git" >> $GITHUB_ENV
+          
+      # Step 4: Set Secondary Repository URL
+      - name: Set Secondary Repository URL
+        run: |
+          echo "SECOND_REPO_URL=https://github.com/anunaidu/Copyright-checker.git" >> $GITHUB_ENV
+
+      # Step 5: Run the Perl Automerge Script
+      - name: Run Automerge Script
+        run: |
+          SRC_BRANCH="${{ github.event.client_payload.source_branch }}"  
+          TARGET_BRANCH="${{ github.event.client_payload.target_branch }}"
+          MAILTO="anu@gmail.com" 
+          DONT_RESOLVE="-d" 
+          DONT_UPDATE="-n" 
+          VERBOSE="${{ github.event.inputs.verbose }}" 
+          
+          echo "Running Automerge Script with source branch: $SRC_BRANCH and target branch: $TARGET_BRANCH...
+          
+           perl cm-utils/automerge/automerge-git-via-merge.pl \
+            -r ${GITHUB_WORKSPACE}/src \
+            -f "$SRC_BRANCH" \
+            -t "$TARGET_BRANCH" \
+            -s "$SRC_REPO_URL" \
+            -b "$SECOND_REPO_URL" \
+            -m "$MAILTO" ${DONT_RESOLVE} ${DONT_UPDATE} ${VERBOSE}"
+        env:
+          SRC_REPO_URL: ${{ env.SRC_REPO_URL }}
+          SECOND_REPO_URL: ${{ env.SECOND_REPO_URL }}
