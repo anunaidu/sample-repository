@@ -1,0 +1,9 @@
+{
+  "repositories": [
+    {
+      "name": "zero-devops-utils",
+      "source_branch": "test1",
+      "target_branch": "main"
+    }
+  ]
+}
