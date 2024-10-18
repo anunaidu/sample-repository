@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - test1  # This will trigger for any push to test1 across repositories
+  workflow_dispatch: 
 
 jobs:
   automerge:
