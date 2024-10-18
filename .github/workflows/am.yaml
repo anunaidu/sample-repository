@@ -26,8 +26,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # Step 3: List files for debugging
-      - name: List files for debugging
-        run: ls -la
+      - name: List files in current directory
+        run: |
+          echo "Listing files in current directory:"
+          ls -la
+          echo "Listing files in src directory:"
+          ls -la src
+          echo "Listing files in cm-utils directory:"
+          ls -la cm-utils
 
       # Step 4: Read config.json for repositories and branches
       - name: Read config.json
@@ -54,14 +60,14 @@ jobs:
             SRC_REPO_URL="https://github.com/anunaidu/$REPO_NAME.git"
             SECOND_REPO_URL="https://github.com/anunaidu/Copyright-checker.git"
 
-            echo "Running Automerge Script for $SRC_BRANCH -> $TARGET_BRANCH..."
+            echo "Running Automerge Script for $SRC_BRANCH -> $TARGET_BRANCH...
             perl cm-utils/automerge/automerge-git-via-merge.pl \
               -r ${GITHUB_WORKSPACE}/src \
               -f "$SRC_BRANCH" \
               -t "$TARGET_BRANCH" \
               -s "$SRC_REPO_URL" \
               -b "$SECOND_REPO_URL" \
-              -m "anu@gmail.com" -d -n
+              -m "anu@gmail.com" -d -n"
           done
         env:
           CONFIG: ${{ env.CONFIG }}
