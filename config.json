@@ -4,6 +4,11 @@
       "name": "zero-devops-utils",
       "source_branch": "test1",
       "target_branch": "main"
+    },
+    {
+      "name": "zero-devops-utils",
+      "source_branch": "test2",
+      "target_branch": "main"
     }
   ]
 }
