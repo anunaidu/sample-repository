@@ -1,4 +1,4 @@
-name: Automerge Branches
+name: AM Branches
 
 on:
   push:
