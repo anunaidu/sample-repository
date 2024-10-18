@@ -10,5 +10,10 @@
       "source_branch": "test2",
       "target_branch": "main"
     }
+    {
+      "name": "zero-deployment",
+      "source_branch": "test6",
+      "target_branch": "main"
+    }
   ]
 }
