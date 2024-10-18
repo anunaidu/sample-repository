@@ -53,8 +53,8 @@ jobs:
       # Step 5: Run Automerge for Multiple Repositories
       - name: Run Automerge for Multiple Repositories
         run: |
-          # Use the CONFIG variable directly from the environment
-          repositories=$(echo "${{ env.CONFIG }}" | jq -c '.repositories[]')
+          echo "DEBUG: CONFIG variable: $CONFIG"  # Output the CONFIG variable for debugging
+          repositories=$(echo "${CONFIG}" | jq -c '.repositories[]')
           for repo in $repositories; do
             REPO_NAME=$(echo "$repo" | jq -r '.name')
             SRC_BRANCH=$(echo "$repo" | jq -r '.source_branch')
