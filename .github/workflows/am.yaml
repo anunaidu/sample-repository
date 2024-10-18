@@ -1,10 +1,9 @@
-name: AM Branches
+name: Automerge Branches
 
 on:
   push:
     branches:
       - test1  # This will trigger for any push to test1 across repositories
-  workflow_dispatch: 
 
 jobs:
   automerge:
@@ -32,11 +31,11 @@ jobs:
             TARGET_BRANCH=$(echo $repo | jq -r '.target_branch')
 
             # Run the Perl automerge script
-            "perl cm-utils/automerge/automerge-git-via-merge.pl \
+            echo perl cm-utils/automerge/automerge-git-via-merge.pl \
               -r "https://github.com/$REPO_NAME.git" \
               -f "$SRC_BRANCH" \
               -t "$TARGET_BRANCH" \
-              -m "anu@gmail.com" \"
+              -m "anu@gmail.com" \
               # Add other parameters as needed
           done
         env:
