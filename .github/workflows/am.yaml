@@ -25,13 +25,17 @@ jobs:
           path: cm-utils
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step 3: Read config.json for repositories and branches
+      # Step 3: List files for debugging
+      - name: List files for debugging
+        run: ls -la
+
+      # Step 4: Read config.json for repositories and branches
       - name: Read config.json
         run: |
-          config=$(cat config.json)
+          config=$(cat config.json)  # Adjust the path if needed
           echo "CONFIG=$config" >> $GITHUB_ENV
 
-      # Step 4: Iterate over repositories and run the automerge script
+      # Step 5: Iterate over repositories and run the automerge script
       - name: Run Automerge for Multiple Repositories
         run: |
           repositories=$(echo "${CONFIG}" | jq -c '.repositories[]')
@@ -45,19 +49,19 @@ jobs:
             SRC_REPO_URL="https://github.com/anunaidu/$REPO_NAME.git"
             SECOND_REPO_URL="https://github.com/anunaidu/Copyright-checker.git"
 
-            echo "Running Automerge Script for $SRC_BRANCH -> $TARGET_BRANCH...
+            echo "Running Automerge Script for $SRC_BRANCH -> $TARGET_BRANCH..."
             perl cm-utils/automerge/automerge-git-via-merge.pl \
               -r ${GITHUB_WORKSPACE}/src \
               -f "$SRC_BRANCH" \
               -t "$TARGET_BRANCH" \
               -s "$SRC_REPO_URL" \
               -b "$SECOND_REPO_URL" \
-              -m "anu@gmail.com" -d -n"
+              -m "anu@gmail.com" -d -n
           done
         env:
           CONFIG: ${{ env.CONFIG }}
 
-      # Step 5: Clean up any temporary files or environment variables if needed
+      # Step 6: Clean up any temporary files or environment variables if needed
       - name: Cleanup
         run: |
           echo "Cleanup done!"
