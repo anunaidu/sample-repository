@@ -1,0 +1,42 @@
+name: Automerge Branches
+
+on:
+  push:
+    branches:
+      - test1  # This will trigger for any push to test1 across repositories
+
+jobs:
+  automerge:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout the main repository (sample-repository)
+      - name: Checkout sample repository
+        uses: actions/checkout@v4
+        with:
+          path: src
+
+      # Step 2: Set the repository and branches dynamically based on the configuration
+      - name: Load config and set branches
+        id: load_config
+        run: |
+          CONFIG_FILE='config.json'
+          echo "REPOS=$(jq -c '.repositories[]' "$CONFIG_FILE")" >> $GITHUB_ENV
+
+      # Step 3: Run the automerge logic for each repository specified in the config
+      - name: Automerge Logic
+        run: |
+          for repo in $REPOS; do
+            REPO_NAME=$(echo $repo | jq -r '.name')
+            SRC_BRANCH=$(echo $repo | jq -r '.source_branch')
+            TARGET_BRANCH=$(echo $repo | jq -r '.target_branch')
+
+            # Run the Perl automerge script
+            "perl cm-utils/automerge/automerge-git-via-merge.pl \
+              -r "https://github.com/$REPO_NAME.git" \
+              -f "$SRC_BRANCH" \
+              -t "$TARGET_BRANCH" \
+              -m "anu@gmail.com" \"
+              # Add other parameters as needed
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
