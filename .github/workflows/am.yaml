@@ -32,8 +32,13 @@ jobs:
       # Step 4: Read config.json for repositories and branches
       - name: Read config.json
         run: |
-          config=$(cat config.json)  # Adjust the path if needed
-          echo "CONFIG=$config" >> $GITHUB_ENV
+          if [ -f config.json ]; then
+            config=$(cat config.json)
+            echo "CONFIG=$config" >> $GITHUB_ENV
+          else
+            echo "config.json not found!"
+            exit 1
+          fi
 
       # Step 5: Iterate over repositories and run the automerge script
       - name: Run Automerge for Multiple Repositories
