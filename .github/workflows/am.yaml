@@ -38,8 +38,9 @@ jobs:
       # Step 4: Read config.json for repositories and branches
       - name: Read config.json
         run: |
-          if [ -f config.json ]; then
-            config=$(cat config.json)
+          echo "Attempting to read config.json..."
+          if [ -f src/config.json ]; then  # Ensure you're checking the right path
+            config=$(cat src/config.json)
             echo "CONFIG=$config" >> $GITHUB_ENV
           else
             echo "config.json not found!"
