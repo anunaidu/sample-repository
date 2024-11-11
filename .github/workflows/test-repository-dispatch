@@ -1,0 +1,16 @@
+name: Test Repository Dispatch
+
+on:
+  repository_dispatch:
+    types: [zero-devops-utils-webhook]
+
+permissions:
+  contents: read
+
+jobs:
+  print-message:
+    if: ${{ github.event.client_payload.source_branch == 'test1' }}  # Only run if source_branch is 'test1'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Webhook Trigger Message
+        run: echo "Webhook from zero-devops-utils delivered successfully for branch: test1"
